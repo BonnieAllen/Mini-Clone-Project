@@ -1,11 +1,11 @@
 class MicropostsController < ApplicationController
-  before_action :set_micropost, only: [:show, :edit, :update, :destroy]
 
   def index
     @microposts = Micropost.all
   end
 
   def show
+    @micropost = Micropost.find(params[:id])
   end
 
   def new
@@ -13,10 +13,11 @@ class MicropostsController < ApplicationController
   end
 
   def edit
+    @micropost = Micropost.find(params[:id])
   end
 
   def create
-    @micropost = Micropost.new(micropost_params)
+    @micropost = Micropost.new(params[:user_id])
 
     respond_to do |format|
       if @micropost.save
@@ -30,8 +31,9 @@ class MicropostsController < ApplicationController
   end
 
   def update
+    @micropost = Micropost.find(params[:id])
     respond_to do |format|
-      if @micropost.update(micropost_params)
+      if @micropost.update(params[:micropost].permit( :content, :user_id))
         format.html { redirect_to @micropost, notice: 'Micropost was successfully updated.' }
         format.json { render :show, status: :ok, location: @micropost }
       else
@@ -42,6 +44,7 @@ class MicropostsController < ApplicationController
   end
 
   def destroy
+    @micropost = Micropost.find(params[:id])
     @micropost.destroy
     respond_to do |format|
       format.html { redirect_to microposts_url, notice: 'Micropost was successfully destroyed.' }
